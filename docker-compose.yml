@@ -1,0 +1,36 @@
+services:
+  # Message Broker (REDIS)
+  # Acts as the "Waiting room" or "Queue" 
+  # Go drops a job here and Python picks it up
+  redis:
+    image: redis:alpine        # "alpine" version (super lightweight)
+    container_name: lattice_redis
+    ports:
+      - "6379:6379"            # maps the port 6379 to the container 6379
+    restart: always            # if DB crashes or PC restarts, docker will restart it
+
+  # Graph Database (NEO4J)
+  # Stores knowledge and doesnt care about rows or columns
+  # Tho it cares about how idea A connects to idea B
+  neo4j:
+    image: neo4j:latest
+    container_name: lattice_neo4j
+    ports:
+      - "7474:7474"            # web dashboard (where you see the graph)
+      - "7687:7687"            # "Bolt" port (how our Go/Python code sends data)
+    environment:
+      - NEO4J_AUTH=neo4j/password  # username/password
+    volumes:
+      - ./data/neo4j:/data     # maps the hard drive folder to the container, without this, all data will just vanish
+    restart: always
+
+  # Vector Database (QDRANT)
+  # Serves as "Semantic Memory", this helps the AI find things that have similar meanings, even in different words 
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: lattice_qdrant
+    ports:
+      - "6333:6333"            # The API port we use to send "embeddings" (list of numbers with a meaning (in this case usually a sentence)) so that the AI has an easier time
+    volumes:
+      - ./data/qdrant:/qdrant/storage # keep the vectors in the hard drive
+    restart: always

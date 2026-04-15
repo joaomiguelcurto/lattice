@@ -1,0 +1,46 @@
+# Databases and Local Data (CRITICAL)
+# Avoid uploading Neo4j or Qdrant data to GitHub.
+/data/
+*.db
+*.sqlite
+
+# Go (API)
+# Binaries and tool-generated files
+services/api-go/api-go
+services/api-go/bin/
+/services/api-go/main
+
+# Python (Worker)
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Not sure if ill be using this
+venv/
+.venv/
+env/
+
+# Keys
+.env
+
+# Next js
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
