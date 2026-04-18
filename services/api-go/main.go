@@ -62,6 +62,30 @@ func main() {
 
 	})
 
+	http.HandleFunc("/ask", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Please use POST to ask questions", http.StatusMethodNotAllowed)
+			return
+		}
+
+		question := r.FormValue("question")
+		if question == "" {
+			http.Error(w, "Question content cannot be empty", http.StatusBadRequest)
+			return
+		}
+
+		// pushing to a different Redis list so the worker knows its not to save but yes to ask
+		err := rdb.LPush(ctx, "lattice_queries", question).Err()
+
+		if err != nil {
+			http.Error(w, "Failed to send question to brain", http.StatusInternalServerError)
+			return
+		}
+
+		fmt.Fprintf(w, "Success! Its in queue.")
+
+	})
+
 	// start the server and keeps listening for incoming traffic on the port 8080
 	fmt.Println("API is awake at http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
