@@ -60,9 +60,45 @@ If you want to go deeper on how UMAP and t-SNE work under the hood, [this articl
 ---
 
 ## Getting Started
-
-_Add your setup steps here._
-
+ 
+### 1. Start the infrastructure
+ 
+```bash
+docker-compose up -d
+```
+ 
+This spins up Qdrant and Neo4j in the background.
+ 
+### 2. Start the API
+ 
+```bash
+cd services/api-go
+go run main.go
+```
+ 
+### 3. Start the worker
+ 
+```bash
+cd services/worker-python
+python worker.py
+```
+ 
+The worker is what processes new notes, generates embeddings, and writes to both databases.
+ 
+---
+ 
+## Useful Neo4j Queries
+ 
+View all nodes and relationships:
+```cypher
+MATCH (n)-[r]->(t) RETURN n, r, t
+```
+ 
+Full reset (wipes everything):
+```cypher
+MATCH (n) DETACH DELETE n
+```
+ 
 ---
 
 ## Why 4096 dimensions?
